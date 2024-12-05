@@ -16,26 +16,10 @@ def releaseSettings(prefix: String) = Seq(
     val rawVersion = git.gitDescribedVersion.value.getOrElse((ThisBuild / version).value)
     CustomVersion.build(rawVersion)
       .fold(versionFormatError(rawVersion))(_.tag)
-    //CustomVersion(rawVersion)
-    //  .map { case (prefix, version) => s"$prefix@${version.bumpMinor.withoutQualifier.unapply}" }
-    //  .getOrElse(versionFormatError(rawVersion))
   },
   releaseVersion := { rawVersion =>
     CustomVersion.build(rawVersion)
       .fold(versionFormatError(rawVersion))(_.version)
-
-    //CustomVersion(rawVersion).map { case (_, version) =>
-    //    releaseVersionBump.value match {
-    //      case Bump.Next =>
-    //        if (version.isSnapshot) {
-    //          version.bumpMinor.withoutSnapshot.unapply
-    //        } else {
-    //          expectedSnapshotVersionError(rawVersion)
-    //        }
-    //      case _ => version.bumpMinor.withoutQualifier.unapply
-    //    }
-    //  }
-    //  .getOrElse(versionFormatError(rawVersion))
   },
 )
 
