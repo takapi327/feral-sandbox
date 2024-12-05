@@ -42,6 +42,7 @@ lazy val fizzBuzz = (project in file("functions/fizz-buzz"))
     },
     git.useGitDescribe := true,
     git.gitDescribePatterns := Seq("FizzBuzz@*"),
+    releaseVersionBump := Version.Bump.Minor,
     releaseVersion := { rawVersion =>
       CustomVersion(rawVersion).map { version =>
           releaseVersionBump.value match {
