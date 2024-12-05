@@ -27,7 +27,6 @@ def releaseSettings(prefix: String) = Seq(
     runTest,
     tagRelease,
     publishArtifacts,
-    commitNextVersion,
     pushChanges
   )
 )
