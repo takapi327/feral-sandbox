@@ -42,5 +42,5 @@ lazy val fizzBuzz = (project in file("functions/fizz-buzz"))
 lazy val root = project
   .in(file("."))
   .settings(name := "feral-sandbox")
-  .settings(version := "0.1.0")
+  .settings(publish / skip := true)
   .aggregate(helloWorld, fizzBuzz)
