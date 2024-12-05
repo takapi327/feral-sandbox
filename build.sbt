@@ -35,6 +35,7 @@ lazy val helloWorld = (project in file("functions/hello-world"))
 lazy val fizzBuzz = (project in file("functions/fizz-buzz"))
   .settings(name := "fizz-buzz")
   .settings(
+    publish / skip := true,
     git.gitTagToVersionNumber := { tag =>
       if (tag matches """^FizzBuzz@(\d+\.\d+\.\d+)$""") Some(tag)
       else None
