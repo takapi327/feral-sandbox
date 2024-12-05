@@ -4,6 +4,9 @@ ThisBuild / organization := "io.github.takapi327"
 ThisBuild / scalaVersion := "3.5.2"
 
 lazy val releaseSettings = Seq(
+  releaseTagName       := (ThisBuild / version).value,
+  releaseTagComment    := s"Release version ${ (ThisBuild / version).value } [ci skip]",
+  releaseCommitMessage := s"Setting version to ${ (ThisBuild / version).value } [ci skip]",
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
