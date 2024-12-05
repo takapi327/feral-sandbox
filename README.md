@@ -1,8 +1,3 @@
-## sbt project compiled with Scala 3
+# sbt-git-sandbox
 
-### Usage
-
-This is a normal sbt project. You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
-
-For more information on the sbt-dotty plugin, see the
-[scala3-example-project](https://github.com/scala/scala3-example-project/blob/main/README.md).
+このリポジトリは、sbt-gitを使用したsbtマルチプロジェクトのバージョン管理を試すためのサンドボックスでありこちらの[記事](https://zenn.dev/nextbeat/articles/scala-feral-lambda-versioning)で解説したものです。
