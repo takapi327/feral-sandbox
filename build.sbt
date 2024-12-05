@@ -28,7 +28,7 @@ def releaseSettings(prefix: String) = Seq(
 
 lazy val helloWorld = (project in file("functions/hello-world"))
   .settings(name := "hello-world")
-  //.settings(publish / skip := true)
+  .settings(publish / skip := true)
   .settings(releaseSettings("HelloWorld")*)
   .enablePlugins(GitVersioning)
 
