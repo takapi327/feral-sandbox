@@ -45,7 +45,7 @@ lazy val fizzBuzz = (project in file("functions/fizz-buzz"))
 
 lazy val root = project
   .in(file("."))
-  .settings(name := "feral-sandbox")
+  .settings(name := "sbt-git-sandbox")
   .settings(
     version := "0.1.0",
     publish / skip := true,
