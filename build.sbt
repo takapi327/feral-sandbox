@@ -11,7 +11,6 @@ def releaseSettings(prefix: String) = Seq(
   },
   git.useGitDescribe := true,
   git.gitDescribePatterns := Seq(s"$prefix@*"),
-  releaseVersionBump := Version.Bump.Minor,
   releaseTagName := releaseVersion.value(git.gitDescribedVersion.value.getOrElse((ThisBuild / version).value)),
   releaseVersion := { rawVersion =>
     CustomVersion(rawVersion).map { case (prefix, version) =>
