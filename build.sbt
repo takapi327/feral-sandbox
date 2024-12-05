@@ -23,7 +23,9 @@ lazy val helloWorld = (project in file("functions/hello-world"))
     git.gitTagToVersionNumber := { tag =>
       if (tag matches """^HelloWorld@(\d+\.\d+\.\d+)$""") Some(tag)
       else None
-    }
+    },
+    git.useGitDescribe := true,
+    git.gitDescribePatterns := Seq("HelloWorld@*")
   )
   .settings(releaseSettings)
   .enablePlugins(GitVersioning)
@@ -34,7 +36,9 @@ lazy val fizzBuzz = (project in file("functions/fizz-buzz"))
     git.gitTagToVersionNumber := { tag =>
       if (tag matches """^FizzBuzz@(\d+\.\d+\.\d+)$""") Some(tag)
       else None
-    }
+    },
+    git.useGitDescribe := true,
+    git.gitDescribePatterns := Seq("FizzBuzz@*")
   )
   .settings(releaseSettings)
   .enablePlugins(GitVersioning)
