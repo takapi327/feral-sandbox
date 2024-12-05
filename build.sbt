@@ -37,13 +37,13 @@ lazy val fizzBuzz = (project in file("functions/fizz-buzz"))
   .settings(
     publish / skip := true,
     git.gitTagToVersionNumber := { tag =>
-      if (tag matches """^FizzBuzz@(\d+\.\d+\.\d+)$""") Some(tag)
+      if (tag matches """^FizzBuzz@([0-9]+)((?:\.[0-9]+)+)?([\.\-0-9a-zA-Z]*)?""") Some(tag)
       else None
     },
     git.useGitDescribe := true,
     git.gitDescribePatterns := Seq("FizzBuzz@*"),
     releaseVersionBump := Version.Bump.Minor,
-    releaseTagName := (ThisBuild / version).value,
+    releaseTagName := git.gitDescribedVersion.value.getOrElse((ThisBuild / version).value),
     releaseVersion := { rawVersion =>
       CustomVersion(rawVersion).map { case (prefix, version) =>
           releaseVersionBump.value match {
