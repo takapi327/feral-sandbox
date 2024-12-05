@@ -5,18 +5,36 @@ import sbtrelease.Version.*
 ThisBuild / organization := "io.github.takapi327"
 ThisBuild / scalaVersion := "3.5.2"
 
-lazy val releaseSettings = Seq(
-  releaseProcess := Seq[ReleaseStep](
-    checkSnapshotDependencies,
-    inquireVersions,
-    runClean,
-    setReleaseVersion,
-    commitReleaseVersion,
-    tagRelease,
-    setNextVersion,
-    commitNextVersion,
-    pushChanges
-  )
+def releaseSettings(prefix: String) = Seq(
+  git.gitTagToVersionNumber := { tag =>
+    if (tag matches s"""^$prefix@([0-9]+)((?:\\.[0-9]+)+)?([\\.\\-0-9a-zA-Z]*)?""") Some(tag)
+    else None
+  },
+  git.useGitDescribe := true,
+  git.gitDescribePatterns := Seq(s"$prefix@*"),
+  releaseVersionBump := Version.Bump.Minor,
+  releaseTagName := releaseVersion.value(git.gitDescribedVersion.value.getOrElse((ThisBuild / version).value)),
+  releaseVersion := { rawVersion =>
+    CustomVersion(rawVersion).map { case (prefix, version) =>
+        releaseVersionBump.value match {
+          case Bump.Next =>
+            if (version.isSnapshot) {
+              s"$prefix@${version.withoutSnapshot.unapply}"
+            } else {
+              expectedSnapshotVersionError(rawVersion)
+            }
+          case _ => s"$prefix@${version.withoutQualifier.unapply}"
+        }
+      }
+      .getOrElse(versionFormatError(rawVersion))
+  },
+  releaseNextVersion := {
+    ver => CustomVersion(ver)
+      .map {
+        case (prefix, version) => s"$prefix@${version.bump(releaseVersionBump.value).asSnapshot.unapply}"
+      }
+      .getOrElse(versionFormatError(ver))
+  },
 )
 
 lazy val helloWorld = (project in file("functions/hello-world"))
@@ -29,44 +47,43 @@ lazy val helloWorld = (project in file("functions/hello-world"))
     git.useGitDescribe := true,
     git.gitDescribePatterns := Seq("HelloWorld@*")
   )
-  .settings(releaseSettings)
   .enablePlugins(GitVersioning)
 
 lazy val fizzBuzz = (project in file("functions/fizz-buzz"))
   .settings(name := "fizz-buzz")
   .settings(
     publish / skip := true,
-    git.gitTagToVersionNumber := { tag =>
-      if (tag matches """^FizzBuzz@([0-9]+)((?:\.[0-9]+)+)?([\.\-0-9a-zA-Z]*)?""") Some(tag)
-      else None
-    },
-    git.useGitDescribe := true,
-    git.gitDescribePatterns := Seq("FizzBuzz@*"),
-    releaseVersionBump := Version.Bump.Minor,
-    releaseTagName := releaseVersion.value(git.gitDescribedVersion.value.getOrElse((ThisBuild / version).value)),
-    releaseVersion := { rawVersion =>
-      CustomVersion(rawVersion).map { case (prefix, version) =>
-          releaseVersionBump.value match {
-            case Bump.Next =>
-              if (version.isSnapshot) {
-                s"$prefix@${version.withoutSnapshot.unapply}"
-              } else {
-                expectedSnapshotVersionError(rawVersion)
-              }
-            case _ => s"$prefix@${version.withoutQualifier.unapply}"
-          }
-        }
-        .getOrElse(versionFormatError(rawVersion))
-    },
-    releaseNextVersion := {
-      ver => CustomVersion(ver)
-        .map {
-          case (prefix, version) => s"$prefix@${version.bump(releaseVersionBump.value).asSnapshot.unapply}"
-        }
-        .getOrElse(versionFormatError(ver))
-    },
+    //git.gitTagToVersionNumber := { tag =>
+    //  if (tag matches """^FizzBuzz@([0-9]+)((?:\.[0-9]+)+)?([\.\-0-9a-zA-Z]*)?""") Some(tag)
+    //  else None
+    //},
+    //git.useGitDescribe := true,
+    //git.gitDescribePatterns := Seq("FizzBuzz@*"),
+    //releaseVersionBump := Version.Bump.Minor,
+    //releaseTagName := releaseVersion.value(git.gitDescribedVersion.value.getOrElse((ThisBuild / version).value)),
+    //releaseVersion := { rawVersion =>
+    //  CustomVersion(rawVersion).map { case (prefix, version) =>
+    //      releaseVersionBump.value match {
+    //        case Bump.Next =>
+    //          if (version.isSnapshot) {
+    //            s"$prefix@${version.withoutSnapshot.unapply}"
+    //          } else {
+    //            expectedSnapshotVersionError(rawVersion)
+    //          }
+    //        case _ => s"$prefix@${version.withoutQualifier.unapply}"
+    //      }
+    //    }
+    //    .getOrElse(versionFormatError(rawVersion))
+    //},
+    //releaseNextVersion := {
+    //  ver => CustomVersion(ver)
+    //    .map {
+    //      case (prefix, version) => s"$prefix@${version.bump(releaseVersionBump.value).asSnapshot.unapply}"
+    //    }
+    //    .getOrElse(versionFormatError(ver))
+    //},
   )
-  //.settings(releaseSettings)
+  .settings(releaseSettings("FizzBuzz"): _*)
   .enablePlugins(GitVersioning)
 
 lazy val root = project
