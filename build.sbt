@@ -44,15 +44,15 @@ lazy val fizzBuzz = (project in file("functions/fizz-buzz"))
     git.gitDescribePatterns := Seq("FizzBuzz@*"),
     releaseVersionBump := Version.Bump.Minor,
     releaseVersion := { rawVersion =>
-      CustomVersion(rawVersion).map { version =>
+      CustomVersion(rawVersion).map { case (prefix, version) =>
           releaseVersionBump.value match {
             case Bump.Next =>
               if (version.isSnapshot) {
-                version.withoutSnapshot.unapply
+                s"$prefix@${version.withoutSnapshot.unapply}"
               } else {
                 expectedSnapshotVersionError(rawVersion)
               }
-            case _ => version.withoutQualifier.unapply
+            case _ => s"$prefix@${version.withoutQualifier.unapply}"
           }
         }
         .getOrElse(versionFormatError(rawVersion))
