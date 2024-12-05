@@ -1,12 +1,11 @@
 import ReleaseTransformations.*
+import sbtrelease.*
+import sbtrelease.Version.*
 
 ThisBuild / organization := "io.github.takapi327"
 ThisBuild / scalaVersion := "3.5.2"
 
 lazy val releaseSettings = Seq(
-  releaseTagName       := (ThisBuild / version).value,
-  releaseTagComment    := s"Release version ${ (ThisBuild / version).value } [ci skip]",
-  releaseCommitMessage := s"Setting version to ${ (ThisBuild / version).value } [ci skip]",
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
@@ -24,7 +23,7 @@ lazy val helloWorld = (project in file("functions/hello-world"))
   .settings(name := "hello-world")
   .settings(
     git.gitTagToVersionNumber := { tag =>
-      if (tag matches """^HelloWorld@(\d+\.\d+\.\d+)$""") Some(tag)
+      if (tag.startsWith("HelloWorld@")) Some(tag.substring("HelloWorld@".length))
       else None
     },
     git.useGitDescribe := true,
@@ -41,9 +40,26 @@ lazy val fizzBuzz = (project in file("functions/fizz-buzz"))
       else None
     },
     git.useGitDescribe := true,
-    git.gitDescribePatterns := Seq("FizzBuzz@*")
+    git.gitDescribePatterns := Seq("FizzBuzz@*"),
+    releaseVersion := { rawVersion =>
+      CustomVersion(rawVersion).map { version =>
+          releaseVersionBump.value match {
+            case Bump.Next =>
+              if (version.isSnapshot) {
+                version.withoutSnapshot.unapply
+              } else {
+                expectedSnapshotVersionError(rawVersion)
+              }
+            case _ => version.withoutQualifier.unapply
+          }
+        }
+        .getOrElse(versionFormatError(rawVersion))
+    },
+    releaseNextVersion := {
+      ver => CustomVersion(ver).map(_.bump(releaseVersionBump.value).asSnapshot.unapply).getOrElse(versionFormatError(ver))
+    },
   )
-  .settings(releaseSettings)
+  //.settings(releaseSettings)
   .enablePlugins(GitVersioning)
 
 lazy val root = project
