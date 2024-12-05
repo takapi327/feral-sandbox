@@ -14,45 +14,29 @@ def releaseSettings(prefix: String) = Seq(
   releaseVersionBump := Version.Bump.Minor,
   releaseTagName := {
     val rawVersion = git.gitDescribedVersion.value.getOrElse((ThisBuild / version).value)
-    CustomVersion(rawVersion)
-      .map { case (prefix, version) => s"$prefix@${version.bumpMinor.withoutQualifier.unapply}" }
-      .getOrElse(versionFormatError(rawVersion))
+    CustomVersion.build(rawVersion)
+      .fold(versionFormatError(rawVersion))(_.tag)
+    //CustomVersion(rawVersion)
+    //  .map { case (prefix, version) => s"$prefix@${version.bumpMinor.withoutQualifier.unapply}" }
+    //  .getOrElse(versionFormatError(rawVersion))
   },
   releaseVersion := { rawVersion =>
-    CustomVersion(rawVersion).map { case (_, version) =>
-        releaseVersionBump.value match {
-          case Bump.Next =>
-            if (version.isSnapshot) {
-              version.bumpMinor.withoutSnapshot.unapply
-            } else {
-              expectedSnapshotVersionError(rawVersion)
-            }
-          case _ => version.bumpMinor.withoutQualifier.unapply
-        }
-      }
-      .getOrElse(versionFormatError(rawVersion))
+    CustomVersion.build(rawVersion)
+      .fold(versionFormatError(rawVersion))(_.version)
+
+    //CustomVersion(rawVersion).map { case (_, version) =>
+    //    releaseVersionBump.value match {
+    //      case Bump.Next =>
+    //        if (version.isSnapshot) {
+    //          version.bumpMinor.withoutSnapshot.unapply
+    //        } else {
+    //          expectedSnapshotVersionError(rawVersion)
+    //        }
+    //      case _ => version.bumpMinor.withoutQualifier.unapply
+    //    }
+    //  }
+    //  .getOrElse(versionFormatError(rawVersion))
   },
-  //releaseVersion := { rawVersion =>
-  //  CustomVersion(rawVersion).map { case (prefix, version) =>
-  //      releaseVersionBump.value match {
-  //        case Bump.Next =>
-  //          if (version.isSnapshot) {
-  //            s"$prefix@${version.bumpMinor.withoutSnapshot.unapply}"
-  //          } else {
-  //            expectedSnapshotVersionError(rawVersion)
-  //          }
-  //        case _ => s"$prefix@${version.bumpMinor.withoutQualifier.unapply}"
-  //      }
-  //    }
-  //    .getOrElse(versionFormatError(rawVersion))
-  //},
-  //releaseNextVersion := {
-  //  ver => CustomVersion(ver)
-  //    .map {
-  //      case (prefix, version) => s"$prefix@${version.bump(releaseVersionBump.value).asSnapshot.unapply}"
-  //    }
-  //    .getOrElse(versionFormatError(ver))
-  //},
 )
 
 lazy val helloWorld = (project in file("functions/hello-world"))
