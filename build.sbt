@@ -10,8 +10,7 @@ def releaseSettings(prefix: String) = Seq(
     if (tag matches s"""^$prefix@([0-9]+)((?:\\.[0-9]+)+)?([\\.\\-0-9a-zA-Z]*)?""") Some(tag)
     else None
   },
-  //git.useGitDescribe := true,
-  //git.gitDescribePatterns := Seq(s"$prefix@*"),
+  git.gitDescribePatterns := Seq(s"$prefix@*"),
   customVersion := {
     val rawVersion = git.gitDescribedVersion.value.getOrElse((ThisBuild / version).value)
     CustomVersion.build(rawVersion)
@@ -20,10 +19,6 @@ def releaseSettings(prefix: String) = Seq(
   version := customVersion.value.version,
   releaseVersionBump := Version.Bump.Minor,
   releaseTagName := customVersion.value.tag,
-  //releaseVersion := { rawVersion =>
-  //  CustomVersion.build(rawVersion)
-  //    .fold(versionFormatError(rawVersion))(_.version)
-  //},
 )
 
 lazy val helloWorld = (project in file("functions/hello-world"))
