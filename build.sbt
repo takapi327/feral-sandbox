@@ -1,5 +1,4 @@
 import sbtrelease.*
-import sbtrelease.Version.*
 
 ThisBuild / organization := "io.github.takapi327"
 ThisBuild / scalaVersion := "3.5.2"
