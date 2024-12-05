@@ -1,1 +1,1 @@
-ThisBuild / version := "FizzBuzz@1.3.0-SNAPSHOT"
+ThisBuild / version := "1.3.0"
