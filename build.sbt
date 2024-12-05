@@ -57,9 +57,11 @@ lazy val fizzBuzz = (project in file("functions/fizz-buzz"))
         }
         .getOrElse(versionFormatError(rawVersion))
     },
-    //releaseNextVersion := {
-    //  ver => CustomVersion(ver).map(_.bump(releaseVersionBump.value).asSnapshot.unapply).getOrElse(versionFormatError(ver))
-    //},
+    releaseNextVersion := {
+      ver => Version(ver)
+        .map(version => s"FizzBuzz@${version.bump(releaseVersionBump.value).asSnapshot.unapply}")
+        .getOrElse(versionFormatError(ver))
+    },
   )
   //.settings(releaseSettings)
   .enablePlugins(GitVersioning)
