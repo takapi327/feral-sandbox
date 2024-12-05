@@ -19,11 +19,11 @@ def releaseSettings(prefix: String) = Seq(
         releaseVersionBump.value match {
           case Bump.Next =>
             if (version.isSnapshot) {
-              s"$prefix@${version.withoutSnapshot.unapply}"
+              s"$prefix@${version.bumpMinor.withoutSnapshot.unapply}"
             } else {
               expectedSnapshotVersionError(rawVersion)
             }
-          case _ => s"$prefix@${version.withoutQualifier.unapply}"
+          case _ => s"$prefix@${version.bumpMinor.withoutQualifier.unapply}"
         }
       }
       .getOrElse(versionFormatError(rawVersion))
