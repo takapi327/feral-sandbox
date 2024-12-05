@@ -46,13 +46,6 @@ def releaseSettings(prefix: String) = Seq(
   //    }
   //    .getOrElse(versionFormatError(rawVersion))
   //},
-  releaseNextVersion := {
-    ver => CustomVersion(ver)
-      .map {
-        case (prefix, version) => version.bump(releaseVersionBump.value).asSnapshot.unapply
-      }
-      .getOrElse(versionFormatError(ver))
-  },
   //releaseNextVersion := {
   //  ver => CustomVersion(ver)
   //    .map {
