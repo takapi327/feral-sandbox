@@ -1,4 +1,5 @@
 import sbtrelease.*
+import sbtrelease.ReleaseStateTransformations.*
 
 ThisBuild / organization := "io.github.takapi327"
 ThisBuild / scalaVersion := "3.5.2"
@@ -19,6 +20,17 @@ def releaseSettings(prefix: String) = Seq(
   version := customVersion.value.version,
   releaseVersionBump := Version.Bump.Minor,
   releaseTagName := customVersion.value.tag,
+  releaseProcess := Seq[ReleaseStep](
+    checkSnapshotDependencies,
+    inquireVersions,
+    runClean,
+    runTest,
+    commitReleaseVersion,
+    tagRelease,
+    publishArtifacts,
+    commitNextVersion,
+    pushChanges
+  )
 )
 
 lazy val helloWorld = (project in file("functions/hello-world"))
